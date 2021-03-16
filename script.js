@@ -1,5 +1,5 @@
-let valT = "";
 let valDisplay = "";
+let valTemp = "";
 let arithmetic = [];
 
 const display = document.querySelector("#display");
@@ -38,37 +38,34 @@ function operate(val1, val2, op) {
     }
 }
 
-function numBtnClick(val) {
-    valT += val;
-    display.innerHTML = valT;
-}
-
 numpad.forEach((btn) => {
     btn.addEventListener("click", () => {
-        numBtnClick(btn.innerHTML);
+        valDisplay += btn.innerHTML;
+        display.innerHTML = valDisplay;
     });
 });
 
 ops.forEach((btn) => {
     btn.addEventListener("click", () => {
-        arithmetic.push(valT);
-        valT = "";
-        display.innerHTML = valT;
+        arithmetic.push(valDisplay);
+        valDisplay = "";
+        display.innerHTML = valDisplay;
         arithmetic.push(btn.getAttribute("value"));
     });
 });
 
 equals.addEventListener("click", () => {
     if (arithmetic.length) {
-        arithmetic.push(valT);
+        arithmetic.push(valDisplay);
         console.log(arithmetic);
-        valDisplay = operate(
+        valTemp = operate(
             parseFloat(arithmetic[0]),
             parseFloat(arithmetic[2]),
             arithmetic[1]
         );
-        valT = valDisplay;
+        valDisplay = valTemp;
         display.innerHTML = valDisplay;
+        valTemp = "";
         arithmetic = [];
     } else {
         return;
@@ -77,21 +74,21 @@ equals.addEventListener("click", () => {
 
 clear.addEventListener("click", () => {
     arithmetic = [];
+    valTemp = "";
     valDisplay = "";
-    valT = "";
-    display.innerHTML = valT;
+    display.innerHTML = valDisplay;
 });
 
 del.addEventListener("click", () => {
-    valT = valT.slice(0, -1);
-    display.innerHTML = valT;
+    valDisplay = valDisplay.slice(0, -1);
+    display.innerHTML = valDisplay;
 });
 
 decimal.addEventListener("click", () => {
-    if (valT.includes(".")) {
+    if (valDisplay.includes(".")) {
         return;
     } else {
-        valT += ".";
+        valDisplay += ".";
     }
-    display.innerHTML = valT;
+    display.innerHTML = valDisplay;
 });

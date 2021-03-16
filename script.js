@@ -47,10 +47,15 @@ numpad.forEach((btn) => {
 
 ops.forEach((btn) => {
     btn.addEventListener("click", () => {
-        arithmetic.push(valDisplay);
-        valDisplay = "";
-        display.innerHTML = valDisplay;
-        arithmetic.push(btn.getAttribute("value"));
+        if (arithmetic.length == 0 || arithmetic.length % 2) {
+            arithmetic.push(valDisplay);
+            arithmetic.push(btn.getAttribute("value"));
+            valDisplay = "";
+            display.innerHTML = valDisplay;
+        } else {
+            arithmetic[arithmetic.length - 1] = btn.getAttribute("value");
+            console.log(arithmetic);
+        }
     });
 });
 

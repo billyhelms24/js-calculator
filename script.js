@@ -1,6 +1,5 @@
 let valDisplay = "";
-let valTemp = "";
-let arithmetic = [];
+let stack = [];
 
 const display = document.querySelector("#display");
 const numpad = document.querySelectorAll(".num-btn");
@@ -40,60 +39,90 @@ function operate(val1, val2, op) {
 
 numpad.forEach((btn) => {
     btn.addEventListener("click", () => {
-        valDisplay += btn.innerHTML;
-        display.innerHTML = valDisplay;
+        if (stack.length == 0) {
+            valDisplay += btn.innerHTML;
+            stack.push(valDisplay);
+            valDisplay = "";
+            display.innerHTML = stack[stack.length - 1];
+        } else if (stack.length % 2) {
+            stack[stack.length - 1] += btn.innerHTML;
+            display.innerHTML = stack[stack.length - 1];
+        } else {
+            valDisplay += btn.innerHTML;
+            stack.push(valDisplay);
+            valDisplay = "";
+            display.innerHTML = stack[stack.length - 1];
+        }
     });
 });
 
 ops.forEach((btn) => {
     btn.addEventListener("click", () => {
-        if (arithmetic.length == 0 || arithmetic.length % 2) {
-            arithmetic.push(valDisplay);
-            arithmetic.push(btn.getAttribute("value"));
-            valDisplay = "";
-            display.innerHTML = valDisplay;
+        if (stack.length == 0) {
+            console.log(stack);
+            return;
+        } else if (stack.length % 2) {
+            stack.push(btn.getAttribute("value"));
+            console.log(stack);
+            display.innerHTML =
+                stack[stack.length - 2] + " " + stack[stack.length - 1];
         } else {
-            arithmetic[arithmetic.length - 1] = btn.getAttribute("value");
-            console.log(arithmetic);
+            stack[stack.length - 1] = btn.getAttribute("value");
+            console.log(stack);
+            display.innerHTML =
+                stack[stack.length - 2] + " " + stack[stack.length - 1];
         }
     });
 });
 
 equals.addEventListener("click", () => {
-    if (arithmetic.length) {
-        arithmetic.push(valDisplay);
-        console.log(arithmetic);
-        valTemp = operate(
-            parseFloat(arithmetic[0]),
-            parseFloat(arithmetic[2]),
-            arithmetic[1]
-        );
-        valDisplay = valTemp;
-        display.innerHTML = valDisplay;
-        valTemp = "";
-        arithmetic = [];
+    if (stack.length == 0) {
+        return;
+    } else if (stack.length % 2) {
+        valDisplay = parseFloat(eval(stack.join("")).toFixed(4));
+        stack = [];
+        stack.push(valDisplay);
+        valDisplay = "";
+        display.innerHTML = stack[0];
     } else {
         return;
     }
 });
 
 clear.addEventListener("click", () => {
-    arithmetic = [];
-    valTemp = "";
+    stack = [];
     valDisplay = "";
     display.innerHTML = valDisplay;
 });
 
 del.addEventListener("click", () => {
-    valDisplay = valDisplay.slice(0, -1);
-    display.innerHTML = valDisplay;
+    if (stack.length == 0) {
+        console.log(stack);
+        return;
+    } else if (stack.length % 2) {
+        stack[stack.length - 1] = stack[stack.length - 1].slice(0, -1);
+        display.innerHTML = stack[stack.length - 1];
+    } else {
+        console.log(stack);
+        return;
+    }
 });
 
 decimal.addEventListener("click", () => {
-    if (valDisplay.includes(".")) {
-        return;
+    if (stack.length == 0) {
+        valDisplay += "0.";
+        stack.push(valDisplay);
+        valDisplay = "";
+        display.innerHTML = stack[0];
+    } else if (stack.length % 2) {
+        if (stack[stack.length - 1].includes(".")) {
+            return;
+        } else {
+            stack[stack.length - 1] += ".";
+            display.innerHTML = stack[stack.length - 1];
+        }
     } else {
-        valDisplay += ".";
+        console.log(stack);
+        return;
     }
-    display.innerHTML = valDisplay;
 });
